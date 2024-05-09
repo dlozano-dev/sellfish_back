@@ -31,8 +31,8 @@ public class ApiControllers {
         return carRepo.findAll();
     }
 
-    @GetMapping(value = "/cars/min/{price}")
-    public List<Car> getCarsMin(@PathVariable double price) {
+    @GetMapping(value = "/cars/{order}/min/{price}")
+    public List<Car> getCarsMin(@PathVariable double price, @PathVariable String order) {
         List<Car> cars = carRepo.findAll();
         List<Car> carsToReturn = new ArrayList<>();
         for (Car car : cars) {
@@ -40,10 +40,10 @@ public class ApiControllers {
                 carsToReturn.add(car);
             }
         }
-        return carsToReturn;
+        return order.equals("desc") ? carsToReturn : carsToReturn.reversed();
     }
-    @GetMapping(value = "/cars/max/{price}")
-    public List<Car> getCarsMax(@PathVariable double price) {
+    @GetMapping(value = "/cars/{order}/max/{price}")
+    public List<Car> getCarsMax(@PathVariable double price, @PathVariable String order) {
         List<Car> cars = carRepo.findAll();
         List<Car> carsToReturn = new ArrayList<>();
         for (Car car : cars) {
@@ -51,10 +51,10 @@ public class ApiControllers {
                 carsToReturn.add(car);
             }
         }
-        return carsToReturn;
+        return order.equals("desc") ? carsToReturn : carsToReturn.reversed();
     }
-    @GetMapping(value = "/cars/min/{minPrice}/max/{maxPrice}")
-    public List<Car> getCarsMinMax(@PathVariable double minPrice, @PathVariable double maxPrice) {
+    @GetMapping(value = "/cars/{order}/min/{minPrice}/max/{maxPrice}")
+    public List<Car> getCarsMinMax(@PathVariable double minPrice, @PathVariable double maxPrice, @PathVariable String order) {
         List<Car> cars = carRepo.findAll();
         List<Car> carsToReturn = new ArrayList<>();
         for (Car car : cars) {
@@ -62,7 +62,7 @@ public class ApiControllers {
                 carsToReturn.add(car);
             }
         }
-        return carsToReturn;
+        return order.equals("desc") ? carsToReturn : carsToReturn.reversed();
     }
     @PostMapping(value = "/save")
     public String saveUser(@RequestBody Car car) {
