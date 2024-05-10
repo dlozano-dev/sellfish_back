@@ -17,52 +17,71 @@ public class ApiControllers {
     public String getPage() {
         return "Welcome";
     }
-
-    @GetMapping(value = "/cars/asc")
-    public List<Car> getCarsAsc() {
-        return carRepo.findAll(Sort.by(Sort.Direction.ASC, "price"));
-    }
-    @GetMapping(value = "/cars/desc")
-    public List<Car> getCarsDesc() {
-        return carRepo.findAll(Sort.by(Sort.Direction.DESC, "price"));
+    @GetMapping(value = "/cars/{order}")
+    public List<Car> getCarsNew(@PathVariable String order) {
+        return switch (order) {
+            case "desc" -> carRepo.findAll(Sort.by(Sort.Direction.DESC, "price"));
+            case "asc" -> carRepo.findAll(Sort.by(Sort.Direction.ASC, "price"));
+            case "new" -> carRepo.findAll().reversed();
+            default -> carRepo.findAll(); // Old case
+        };
     }
     @GetMapping(value = "/cars")
     public List<Car> getCarsNewest() {
-        return carRepo.findAll();
+        return carRepo.findAll().reversed();
     }
 
     @GetMapping(value = "/cars/{order}/min/{price}")
     public List<Car> getCarsMin(@PathVariable double price, @PathVariable String order) {
-        List<Car> cars = carRepo.findAll();
+        List<Car> cars = switch (order) {
+            case "desc" -> carRepo.findAll(Sort.by(Sort.Direction.DESC, "price"));
+            case "asc" -> carRepo.findAll(Sort.by(Sort.Direction.ASC, "price"));
+            case "new" -> carRepo.findAll().reversed();
+            default -> carRepo.findAll(); // Old case
+        };
         List<Car> carsToReturn = new ArrayList<>();
         for (Car car : cars) {
             if (car.getPrice() >= price) {
                 carsToReturn.add(car);
             }
         }
-        return order.equals("desc") ? carsToReturn : carsToReturn.reversed();
+        return carsToReturn;
     }
     @GetMapping(value = "/cars/{order}/max/{price}")
     public List<Car> getCarsMax(@PathVariable double price, @PathVariable String order) {
-        List<Car> cars = carRepo.findAll();
+        List<Car> cars = switch (order) {
+            case "desc" -> carRepo.findAll(Sort.by(Sort.Direction.DESC, "price"));
+            case "asc" -> carRepo.findAll(Sort.by(Sort.Direction.ASC, "price"));
+            case "new" -> carRepo.findAll().reversed();
+            default ->
+                // Old case
+                    carRepo.findAll();
+        };
         List<Car> carsToReturn = new ArrayList<>();
         for (Car car : cars) {
             if (car.getPrice() <= price) {
                 carsToReturn.add(car);
             }
         }
-        return order.equals("desc") ? carsToReturn : carsToReturn.reversed();
+        return carsToReturn;
     }
     @GetMapping(value = "/cars/{order}/min/{minPrice}/max/{maxPrice}")
     public List<Car> getCarsMinMax(@PathVariable double minPrice, @PathVariable double maxPrice, @PathVariable String order) {
-        List<Car> cars = carRepo.findAll();
+        List<Car> cars = switch (order) {
+            case "desc" -> carRepo.findAll(Sort.by(Sort.Direction.DESC, "price"));
+            case "asc" -> carRepo.findAll(Sort.by(Sort.Direction.ASC, "price"));
+            case "new" -> carRepo.findAll().reversed();
+            default ->
+                // Old case
+                    carRepo.findAll();
+        };
         List<Car> carsToReturn = new ArrayList<>();
         for (Car car : cars) {
             if (car.getPrice() >= minPrice && car.getPrice() <= maxPrice) {
                 carsToReturn.add(car);
             }
         }
-        return order.equals("desc") ? carsToReturn : carsToReturn.reversed();
+        return carsToReturn;
     }
     @PostMapping(value = "/save")
     public String saveUser(@RequestBody Car car) {
