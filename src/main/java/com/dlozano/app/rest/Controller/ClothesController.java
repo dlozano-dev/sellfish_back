@@ -54,8 +54,7 @@ public class ClothesController {
                     clotheDTO.getModel(),
                     clotheDTO.getCategory(),
                     clotheDTO.getPrice(),
-                    clotheDTO.getAdvertiser(),
-                    clotheDTO.getPicture()
+                    clotheDTO.getAdvertiser()
             );
             clothesRepo.save(clothes);
             return true;
