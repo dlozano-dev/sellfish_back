@@ -1,16 +1,20 @@
 package com.dlozano.app.rest.Controller;
 
 import com.dlozano.app.rest.Models.Car;
+import com.dlozano.app.rest.Models.User;
 import com.dlozano.app.rest.Repo.CarRepo;
+import com.dlozano.app.rest.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
+
 @RestController
 public class ApiControllers {
+    @Autowired
+    private UserRepo userRepo;
     @Autowired
     private CarRepo carRepo;
     @GetMapping(value = "/")
@@ -83,16 +87,41 @@ public class ApiControllers {
         }
         return carsToReturn;
     }
-    @PostMapping(value = "/save")
-    public String saveUser(@RequestBody Car car) {
-        carRepo.save(car);
-        return "Saved...";
+    @GetMapping(value = "/userExists/{email}/{user}")
+    public boolean userExists(@PathVariable String email, @PathVariable String user) {
+        List<User> users = userRepo.findAll();
+        for (User i : users) {
+            if (i.getEmail().equals(email.trim()) || i.getUsername().equals(user.trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    @GetMapping(value = "/getUsers")
+    public List<User> getUsers(@RequestBody User user) {
+        return userRepo.findAll();
+    }
+    @GetMapping(value = "/saveUser/{username}/{email}/{password}")
+    public void saveUser(@PathVariable String username, @PathVariable String email, @PathVariable String password) {
+        User user = new User(username, email, password);
+        userRepo.save(user);
     }
     @DeleteMapping(value = "/delete/{id}")
     public String deleteCar(@PathVariable long id) {
         Car deleteUser = carRepo.findById(id).get();
         carRepo.delete(deleteUser);
         return "Delete car with the id: " + id;
+    }
+    @GetMapping(value = "/login/{user}/{password}")
+    public boolean login(@PathVariable String user, @PathVariable String password) {
+        List<User> users = userRepo.findAll();
+
+        for (User i : users) {
+            if (i.getUsername().equals(user.trim()) && i.getPassword().equals(password)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 //    @PostMapping(value = "/save")
