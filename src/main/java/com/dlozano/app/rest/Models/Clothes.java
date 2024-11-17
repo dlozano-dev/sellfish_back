@@ -32,6 +32,10 @@ public class Clothes {
 //        this.picture = picture; TODO
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getBrand() {
         return brand;
     }

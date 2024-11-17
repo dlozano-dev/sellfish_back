@@ -113,15 +113,15 @@ public class ApiControllers {
         return "Delete car with the id: " + id;
     }
     @GetMapping(value = "/login/{user}/{password}")
-    public boolean login(@PathVariable String user, @PathVariable String password) {
+    public long login(@PathVariable String user, @PathVariable String password) {
         List<User> users = userRepo.findAll();
 
         for (User i : users) {
             if (i.getUsername().equals(user.trim()) && i.getPassword().equals(password)) {
-                return true;
+                return i.getId();
             }
         }
-        return false;
+        return -1;
     }
 
 //    @PostMapping(value = "/save")

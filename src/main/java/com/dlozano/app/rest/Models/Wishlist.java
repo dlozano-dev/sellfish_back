@@ -8,41 +8,50 @@ public class Wishlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
-    private int userIdT;
+    private int userId;
 
     @Column
-    private int clotheIdT;
+    private int clotheId;
 
     public Wishlist() {
     }
 
-    public Wishlist(int userIdT, int clotheIdT) {
-        this.userIdT = userIdT;
-        this.clotheIdT = clotheIdT;
+    public Wishlist(int userId, int clotheId) {
+        this.userId = userId;
+        this.clotheId = clotheId;
     }
 
-    public int getUserIdT() {
-        return userIdT;
+    public long getId() {
+        return id;
+
     }
 
-    public void setUserIdT(int userIdT) {
-        this.userIdT = userIdT;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public int getClotheIdT() {
-        return clotheIdT;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setClotheIdT(int clotheIdT) {
-        this.clotheIdT = clotheIdT;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getClotheId() {
+        return clotheId;
+    }
+
+    public void setClotheId(int clotheId) {
+        this.clotheId = clotheId;
     }
 
     @Override
     public String toString() {
         return "Wishlist{" +
                 "id=" + id +
-                ", userIdT=" + userIdT +
-                ", clotheIdT=" + clotheIdT +
+                ", userIdT=" + userId +
+                ", clotheIdT=" + clotheId +
                 '}';
     }
 }

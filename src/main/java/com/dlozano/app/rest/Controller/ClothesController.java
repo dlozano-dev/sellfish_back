@@ -1,6 +1,5 @@
 package com.dlozano.app.rest.Controller;
 
-import com.dlozano.app.rest.Models.Car;
 import com.dlozano.app.rest.Models.ClotheDTO;
 import com.dlozano.app.rest.Models.Clothes;
 import com.dlozano.app.rest.Models.Wishlist;
@@ -35,8 +34,9 @@ public class ClothesController {
         @Override
         public Wishlist mapRow(ResultSet rs, int rowNum) throws SQLException {
             Wishlist wishlist = new Wishlist();
-            wishlist.setUserIdT((int) rs.getLong("user_idT"));
-            wishlist.setUserIdT((int) rs.getLong("clothe_idT"));
+            wishlist.setId((long) rs.getInt("id"));
+            wishlist.setUserId((int) rs.getLong("user_id"));
+            wishlist.setClotheId((int) rs.getLong("clothe_id"));
             return wishlist;
         }
     }
@@ -69,13 +69,23 @@ public class ClothesController {
     }
 
     @GetMapping(value = "/liked/{userId}/{productId}")
-    public boolean setWishList(@PathVariable int userId, @PathVariable int productId) {
+    public boolean setFavorite(@PathVariable int userId, @PathVariable int productId) {
         try {
-            Wishlist liked = new Wishlist(
-                userId,
-                productId
-            );
+            Wishlist liked = new Wishlist(userId, productId);
             wishlistRepo.save(liked);
+            return true;
+        } catch (Exception e) {
+            String id = "SELECT * FROM wishlist WHERE user_id = ? AND clothe_id = ?";
+            wishlistRepo.delete(jdbcTemplate.queryForObject(id, new Object[]{userId, productId}, new WishlistRowMapper()));
+            return false;
+        }
+    }
+
+    @GetMapping(value = "/isFav/{userId}/{productId}")
+    public boolean isFavorite(@PathVariable int userId, @PathVariable int productId) {
+        try {
+            String id = "SELECT * FROM wishlist WHERE user_id = ? AND clothe_id = ?";
+            jdbcTemplate.queryForObject(id, new Object[]{userId, productId}, new WishlistRowMapper());
             return true;
         } catch (Exception e) {
             return false;
