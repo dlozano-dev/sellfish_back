@@ -1,5 +1,6 @@
 package com.dlozano.app.rest.Controller;
 
+import com.dlozano.app.rest.Models.Car;
 import com.dlozano.app.rest.Models.ClotheDTO;
 import com.dlozano.app.rest.Models.Clothes;
 import com.dlozano.app.rest.Models.Wishlist;
@@ -12,8 +13,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 @RestController
 public class ClothesController {
@@ -26,7 +33,10 @@ public class ClothesController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public Wishlist getUserById(Long id) {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Wishlist getByUserId(Long id) {
         String sql = "SELECT * FROM user WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, new WishlistRowMapper());
     }
@@ -42,8 +52,15 @@ public class ClothesController {
     }
 
     @GetMapping(value = "/wishlist/{userId}")
-    public List<Wishlist> getWishList(@PathVariable long userId) {
-        return wishlistRepo.findAllById(Collections.singleton(userId));
+    public List<Clothes> getWishList(@PathVariable long userId) {
+        List<Wishlist> wishlist = wishlistRepo.findAll();
+        List<Long> ids = new ArrayList<>();
+        for (Wishlist i: wishlist) {
+            if (i.getUserId() == userId) {
+                ids.add(i.getClotheId());
+            }
+        }
+        return clothesRepo.findAllById(ids);
     }
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping(value = "/saveClothe")
@@ -91,6 +108,8 @@ public class ClothesController {
             return false;
         }
     }
+
+
 
 
 }

@@ -38,7 +38,7 @@ public class Wishlist {
         this.userId = userId;
     }
 
-    public int getClotheId() {
+    public long getClotheId() {
         return clotheId;
     }
 
