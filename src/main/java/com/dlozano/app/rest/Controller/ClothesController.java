@@ -1,6 +1,5 @@
 package com.dlozano.app.rest.Controller;
 
-import com.dlozano.app.rest.Models.Car;
 import com.dlozano.app.rest.Models.ClotheDTO;
 import com.dlozano.app.rest.Models.Clothes;
 import com.dlozano.app.rest.Models.Wishlist;
@@ -15,12 +14,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 
 @RestController
 public class ClothesController {
@@ -108,8 +105,4 @@ public class ClothesController {
             return false;
         }
     }
-
-
-
-
 }
