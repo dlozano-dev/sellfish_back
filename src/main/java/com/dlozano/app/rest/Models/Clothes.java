@@ -7,7 +7,7 @@ public class Clothes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     @Column
     private String brand;
     @Column
@@ -17,22 +17,22 @@ public class Clothes {
     @Column
     private float price;
     @Column
-    private String advertiser;
+    private int publisher;
     @Column
     private String picture;
     public Clothes() {
     }
 
-    public Clothes(String brand, String model, String category, float price, String advertiser) {
+    public Clothes(String brand, String model, String category, float price, int publisher) {
         this.brand = brand;
         this.model = model;
         this.category = category;
         this.price = price;
-        this.advertiser = advertiser;
+        this.publisher = publisher;
 //        this.picture = picture; TODO
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
@@ -68,12 +68,12 @@ public class Clothes {
         this.price = price;
     }
 
-    public String getAdvertiser() {
-        return advertiser;
+    public int getPublisher() {
+        return publisher;
     }
 
-    public void setAdvertiser(String advertiser) {
-        this.advertiser = advertiser;
+    public void setPublisher(int publisher) {
+        this.publisher = publisher;
     }
 
     public String getPicture() {
@@ -91,7 +91,7 @@ public class Clothes {
                 ", model='" + model + '\'' +
                 ", category='" + category + '\'' +
                 ", price=" + price +
-                ", advertiser='" + advertiser + '\'' +
+                ", advertiser='" + publisher + '\'' +
                 ", picture='" + picture + '\'' +
                 '}';
     }

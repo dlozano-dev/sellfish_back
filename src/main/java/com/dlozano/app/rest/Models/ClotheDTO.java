@@ -5,8 +5,8 @@ public class ClotheDTO {
     private String model;
     private String category;
     private Float price;
-    private String advertiser;
-    private String picture;
+    private int publisher;
+//    private String picture;
 
     // Getters y Setters
 
@@ -42,19 +42,19 @@ public class ClotheDTO {
         this.price = price;
     }
 
-    public String getAdvertiser() {
-        return advertiser;
+    public int getPublisher() {
+        return publisher;
     }
 
-    public void setAdvertiser(String advertiser) {
-        this.advertiser = advertiser;
+    public void setPublisher(int publisher) {
+        this.publisher = publisher;
     }
 
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
+//    public String getPicture() {
+//        return picture;
+//    }
+//
+//    public void setPicture(String picture) {
+//        this.picture = picture;
+//    }
 }
