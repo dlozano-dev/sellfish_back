@@ -1,5 +1,6 @@
 package com.dlozano.app.rest.Controller;
 
+import com.dlozano.app.rest.Models.Clothes;
 import com.dlozano.app.rest.Models.Message;
 import com.dlozano.app.rest.Repo.MessageRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,32 @@ public class MessageController {
         return messageRepo.getMessages(user, product);
     }
 
-    @PostMapping(value = "/postMessage")
-    public boolean postMessage(@RequestBody Message message) {
+    @GetMapping(value = "/postMessage/{user}/{publisher}/{product}/{message}/{time}")
+    public boolean postMessage(
+        @PathVariable int user,
+        @PathVariable int publisher,
+        @PathVariable int product,
+        @PathVariable String message,
+        @PathVariable long time
+    ) {
         try {
-            messageRepo.save(message);
+            messageRepo.save(
+                new Message(
+                    user,
+                    publisher,
+                    product,
+                    message,
+                    time
+                )
+            );
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @GetMapping(value = "chats/{user}")
+    public List<Clothes> getChats(@PathVariable int user) {
+        return messageRepo.getChats(user);
     }
 }
