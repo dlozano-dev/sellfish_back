@@ -59,27 +59,50 @@ public class ClothesController {
         }
         return clothesRepo.findAllById(ids);
     }
-    @CrossOrigin(origins = "http://localhost:5173")
-    @PostMapping(value = "/saveClothe")
-    public boolean saveClothe(@RequestBody ClotheDTO clotheDTO) {
+//    @CrossOrigin(origins = "http://localhost:5173")
+//    @PostMapping(value = "/saveClothe")
+//    public boolean saveClothe(@RequestBody ClotheDTO clotheDTO) {
+//        try {
+//            Clothes clothes = new Clothes(
+//                    clotheDTO.getBrand(),
+//                    clotheDTO.getModel(),
+//                    clotheDTO.getCategory(),
+//                    clotheDTO.getPrice(),
+//                    clotheDTO.getPublisher()
+//            );
+//            clothesRepo.save(clothes);
+//            return true;
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
+
+    @GetMapping(value = "/clothes")
+    public List<Clothes> getClothes() {
+        return clothesRepo.findAll().reversed();
+    }
+
+    @GetMapping(value = "/saveClothe/{brand}/{model}/{category}/{price}/{userId}")
+    public boolean saveClothe(
+        @PathVariable String brand,
+        @PathVariable String model,
+        @PathVariable String category,
+        @PathVariable float price,
+        @PathVariable int userId
+    ) {
         try {
             Clothes clothes = new Clothes(
-                    clotheDTO.getBrand(),
-                    clotheDTO.getModel(),
-                    clotheDTO.getCategory(),
-                    clotheDTO.getPrice(),
-                    clotheDTO.getPublisher()
+                    brand,
+                    model,
+                    category,
+                    price,
+                    userId
             );
             clothesRepo.save(clothes);
             return true;
         } catch (Exception e) {
             return false;
         }
-    }
-
-    @GetMapping(value = "/clothes")
-    public List<Clothes> getClothes() {
-        return clothesRepo.findAll().reversed();
     }
 
     @GetMapping(value = "/liked/{userId}/{productId}")
