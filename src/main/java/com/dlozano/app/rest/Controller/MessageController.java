@@ -19,13 +19,14 @@ public class MessageController {
         return messageRepo.getMessages(user, product);
     }
 
-    @GetMapping(value = "/postMessage/{user}/{publisher}/{product}/{message}/{time}")
+    @GetMapping(value = "/postMessage/{user}/{publisher}/{product}/{message}/{time}/{buyer}")
     public boolean postMessage(
         @PathVariable int user,
         @PathVariable int publisher,
         @PathVariable int product,
         @PathVariable String message,
-        @PathVariable long time
+        @PathVariable long time,
+        @PathVariable int buyer
     ) {
         try {
             messageRepo.save(
@@ -34,7 +35,8 @@ public class MessageController {
                     publisher,
                     product,
                     message,
-                    time
+                    time,
+                    buyer
                 )
             );
             return true;

@@ -21,17 +21,21 @@ public class Message {
     private String message;
 
     @Column
+    private int buyer;
+
+    @Column
     private long time;
 
 
     public Message() {}
 
-    public Message(int sender, int receiver, int product, String message, long time) {
+    public Message(int sender, int receiver, int product, String message, long time, int buyer) {
         this.sender = sender;
         this.receiver = receiver;
         this.product = product;
         this.message = message;
         this.time = time;
+        this.buyer = buyer;
     }
 
     public int getId() {
@@ -80,5 +84,13 @@ public class Message {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public int getBuyer() {
+        return buyer;
+    }
+
+    public void setBuyer(int buyer) {
+        this.buyer = buyer;
     }
 }
