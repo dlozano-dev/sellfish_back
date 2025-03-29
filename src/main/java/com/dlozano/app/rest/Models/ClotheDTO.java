@@ -1,5 +1,7 @@
 package com.dlozano.app.rest.Models;
 
+import jakarta.persistence.Column;
+
 public class ClotheDTO {
     private String brand;
     private String model;
@@ -7,20 +9,23 @@ public class ClotheDTO {
     private Float price;
     private int publisher;
     private String picture;
+    private String size;
+    private String state;
 
     public ClotheDTO() {
     }
 
-    public ClotheDTO(String brand, String model, String category, Float price, int publisher, String picture) {
+    public ClotheDTO(String brand, String model, String category, Float price, int publisher, String picture, String size, String state) {
         this.brand = brand;
         this.model = model;
         this.category = category;
         this.price = price;
         this.publisher = publisher;
         this.picture = picture;
+        this.size = size;
+        this.state = state;
     }
 
-    // Getters y Setters
     public String getBrand() {
         return brand;
     }
@@ -67,5 +72,35 @@ public class ClotheDTO {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    @Override
+    public String toString() {
+        return "ClotheDTO{" +
+                "brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", category='" + category + '\'' +
+                ", price=" + price +
+                ", publisher=" + publisher +
+                ", picture='" + picture + '\'' +
+                ", size='" + size + '\'' +
+                ", state='" + state + '\'' +
+                '}';
     }
 }

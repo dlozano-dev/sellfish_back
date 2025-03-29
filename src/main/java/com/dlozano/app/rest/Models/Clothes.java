@@ -20,20 +20,34 @@ public class Clothes {
     private int publisher;
     @Column
     private String picture;
+    @Column
+    private String postDate;
+    @Column
+    private String size;
+    @Column
+    private String state;
+
     public Clothes() {
     }
 
-    public Clothes(String brand, String model, String category, float price, int publisher, String picture) {
+    public Clothes(String brand, String model, String category, float price, int publisher, String picture, String postDate, String size, String state) {
         this.brand = brand;
         this.model = model;
         this.category = category;
         this.price = price;
         this.publisher = publisher;
         this.picture = picture;
+        this.postDate = postDate;
+        this.size = size;
+        this.state = state;
     }
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getBrand() {
@@ -84,15 +98,43 @@ public class Clothes {
         this.picture = picture;
     }
 
+    public String getPostDate() {
+        return postDate;
+    }
+
+    public void setPostDate(String postDate) {
+        this.postDate = postDate;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     @Override
     public String toString() {
         return "Clothes{" +
-                "brand='" + brand + '\'' +
+                "id=" + id +
+                ", brand='" + brand + '\'' +
                 ", model='" + model + '\'' +
                 ", category='" + category + '\'' +
                 ", price=" + price +
-                ", advertiser='" + publisher + '\'' +
+                ", publisher=" + publisher +
                 ", picture='" + picture + '\'' +
+                ", postDate='" + postDate + '\'' +
+                ", size='" + size + '\'' +
+                ", state='" + state + '\'' +
                 '}';
     }
 }

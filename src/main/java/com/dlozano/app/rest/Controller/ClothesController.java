@@ -64,23 +64,6 @@ public class ClothesController {
         }
         return clothesRepo.findAllById(ids);
     }
-//    @CrossOrigin(origins = "http://localhost:5173")
-//    @PostMapping(value = "/saveClothe")
-//    public boolean saveClothe(@RequestBody ClotheDTO clotheDTO) {
-//        try {
-//            Clothes clothes = new Clothes(
-//                    clotheDTO.getBrand(),
-//                    clotheDTO.getModel(),
-//                    clotheDTO.getCategory(),
-//                    clotheDTO.getPrice(),
-//                    clotheDTO.getPublisher()
-//            );
-//            clothesRepo.save(clothes);
-//            return true;
-//        } catch (Exception e) {
-//            return false;
-//        }
-//    }
 
     @GetMapping(value = "/clothes")
     public List<Clothes> getClothes() {
@@ -91,27 +74,27 @@ public class ClothesController {
     @PostMapping("/saveClothe")
     public ResponseEntity<Boolean> saveClothe(@RequestBody ClotheDTO clotheDTO) {
         try {
-            System.out.println(clotheDTO.getPublisher());
-
             // Ensure user exists
             User user = userRepo.findById((long) clotheDTO.getPublisher()).orElseThrow(() ->
-                    new RuntimeException("User not found"));
-
-            Clothes clothes = new Clothes(
-                    clotheDTO.getBrand(),
-                    clotheDTO.getModel(),
-                    clotheDTO.getCategory(),
-                    clotheDTO.getPrice(),
-                    user.getId(),
-                    clotheDTO.getPicture()
+                new RuntimeException("User not found")
             );
 
-            System.out.println(clothes);
+            Clothes clothes = new Clothes(
+                clotheDTO.getBrand(),
+                clotheDTO.getModel(),
+                clotheDTO.getCategory(),
+                clotheDTO.getPrice(),
+                user.getId(),
+                clotheDTO.getPicture(),
+                Long.toString(System.currentTimeMillis()),
+                clotheDTO.getSize(),
+                clotheDTO.getState()
+            );
 
             clothesRepo.save(clothes);
+
             return ResponseEntity.ok(true);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return ResponseEntity.status(500).body(false);
         }
     }
