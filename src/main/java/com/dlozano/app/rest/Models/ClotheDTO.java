@@ -6,10 +6,21 @@ public class ClotheDTO {
     private String category;
     private Float price;
     private int publisher;
-//    private String picture;
+    private String picture;
+
+    public ClotheDTO() {
+    }
+
+    public ClotheDTO(String brand, String model, String category, Float price, int publisher, String picture) {
+        this.brand = brand;
+        this.model = model;
+        this.category = category;
+        this.price = price;
+        this.publisher = publisher;
+        this.picture = picture;
+    }
 
     // Getters y Setters
-
     public String getBrand() {
         return brand;
     }
@@ -50,11 +61,11 @@ public class ClotheDTO {
         this.publisher = publisher;
     }
 
-//    public String getPicture() {
-//        return picture;
-//    }
-//
-//    public void setPicture(String picture) {
-//        this.picture = picture;
-//    }
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 }

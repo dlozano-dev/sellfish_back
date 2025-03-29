@@ -23,13 +23,13 @@ public class Clothes {
     public Clothes() {
     }
 
-    public Clothes(String brand, String model, String category, float price, int publisher) {
+    public Clothes(String brand, String model, String category, float price, int publisher, String picture) {
         this.brand = brand;
         this.model = model;
         this.category = category;
         this.price = price;
         this.publisher = publisher;
-//        this.picture = picture; TODO
+        this.picture = picture;
     }
 
     public int getId() {

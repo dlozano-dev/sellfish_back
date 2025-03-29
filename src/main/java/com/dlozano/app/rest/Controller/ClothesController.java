@@ -2,10 +2,13 @@ package com.dlozano.app.rest.Controller;
 
 import com.dlozano.app.rest.Models.ClotheDTO;
 import com.dlozano.app.rest.Models.Clothes;
+import com.dlozano.app.rest.Models.User;
 import com.dlozano.app.rest.Models.Wishlist;
 import com.dlozano.app.rest.Repo.ClothesRepo;
+import com.dlozano.app.rest.Repo.UserRepo;
 import com.dlozano.app.rest.Repo.WishlistRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,8 @@ import jakarta.persistence.PersistenceContext;
 public class ClothesController {
     @Autowired
     private ClothesRepo clothesRepo;
+    @Autowired
+    private UserRepo userRepo;
 
     @Autowired
     private WishlistRepo wishlistRepo;
@@ -82,26 +87,32 @@ public class ClothesController {
         return clothesRepo.findAll().reversed();
     }
 
-    @GetMapping(value = "/saveClothe/{brand}/{model}/{category}/{price}/{userId}")
-    public boolean saveClothe(
-        @PathVariable String brand,
-        @PathVariable String model,
-        @PathVariable String category,
-        @PathVariable float price,
-        @PathVariable int userId
-    ) {
+    @CrossOrigin(origins = "http://localhost:5173")
+    @PostMapping("/saveClothe")
+    public ResponseEntity<Boolean> saveClothe(@RequestBody ClotheDTO clotheDTO) {
         try {
+            System.out.println(clotheDTO.getPublisher());
+
+            // Ensure user exists
+            User user = userRepo.findById((long) clotheDTO.getPublisher()).orElseThrow(() ->
+                    new RuntimeException("User not found"));
+
             Clothes clothes = new Clothes(
-                    brand,
-                    model,
-                    category,
-                    price,
-                    userId
+                    clotheDTO.getBrand(),
+                    clotheDTO.getModel(),
+                    clotheDTO.getCategory(),
+                    clotheDTO.getPrice(),
+                    user.getId(),
+                    clotheDTO.getPicture()
             );
+
+            System.out.println(clothes);
+
             clothesRepo.save(clothes);
-            return true;
+            return ResponseEntity.ok(true);
         } catch (Exception e) {
-            return false;
+            System.out.println(e.getMessage());
+            return ResponseEntity.status(500).body(false);
         }
     }
 
