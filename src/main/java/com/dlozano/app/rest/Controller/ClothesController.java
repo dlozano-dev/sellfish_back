@@ -8,6 +8,9 @@ import com.dlozano.app.rest.Repo.ClothesRepo;
 import com.dlozano.app.rest.Repo.UserRepo;
 import com.dlozano.app.rest.Repo.WishlistRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -66,8 +69,12 @@ public class ClothesController {
     }
 
     @GetMapping(value = "/clothes")
-    public List<Clothes> getClothes() {
-        return clothesRepo.findAll().reversed();
+    public Page<Clothes> getClothes(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return clothesRepo.findAll(pageable);
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
