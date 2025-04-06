@@ -7,6 +7,7 @@ import com.dlozano.app.rest.Models.Wishlist;
 import com.dlozano.app.rest.Repo.ClothesRepo;
 import com.dlozano.app.rest.Repo.UserRepo;
 import com.dlozano.app.rest.Repo.WishlistRepo;
+import com.dlozano.app.rest.Services.ClothesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,9 @@ public class ClothesController {
     private ClothesRepo clothesRepo;
     @Autowired
     private UserRepo userRepo;
+
+    @Autowired
+    private ClothesService clothesService;
 
     @Autowired
     private WishlistRepo wishlistRepo;
@@ -68,13 +72,19 @@ public class ClothesController {
         return clothesRepo.findAllById(ids);
     }
 
-    @GetMapping(value = "/clothes")
-    public Page<Clothes> getClothes(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size
+    @GetMapping("/clothes")
+    public Page<Clothes> getFilteredClothes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) List<String> categories,
+            @RequestParam(required = false) List<String> sizes,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) Float minPrice,
+            @RequestParam(required = false) Float maxPrice
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return clothesRepo.findAll(pageable);
+        return clothesService.getFilteredClothes(search, categories, sizes, location, minPrice, maxPrice, pageable);
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
@@ -95,7 +105,8 @@ public class ClothesController {
                 clotheDTO.getPicture(),
                 Long.toString(System.currentTimeMillis()),
                 clotheDTO.getSize(),
-                clotheDTO.getState()
+                clotheDTO.getState(),
+                clotheDTO.getLocation()
             );
 
             clothesRepo.save(clothes);

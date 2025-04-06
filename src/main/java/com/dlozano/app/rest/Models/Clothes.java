@@ -27,10 +27,13 @@ public class Clothes {
     @Column
     private String state;
 
+    @Column
+    private String location;
+
     public Clothes() {
     }
 
-    public Clothes(String brand, String model, String category, float price, int publisher, String picture, String postDate, String size, String state) {
+    public Clothes(String brand, String model, String category, float price, int publisher, String picture, String postDate, String size, String state, String location) {
         this.brand = brand;
         this.model = model;
         this.category = category;
@@ -40,6 +43,7 @@ public class Clothes {
         this.postDate = postDate;
         this.size = size;
         this.state = state;
+        this.location = location;
     }
 
     public int getId() {
@@ -122,6 +126,14 @@ public class Clothes {
         this.state = state;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     @Override
     public String toString() {
         return "Clothes{" +
@@ -135,6 +147,7 @@ public class Clothes {
                 ", postDate='" + postDate + '\'' +
                 ", size='" + size + '\'' +
                 ", state='" + state + '\'' +
+                ", location='" + location + '\'' +
                 '}';
     }
 }

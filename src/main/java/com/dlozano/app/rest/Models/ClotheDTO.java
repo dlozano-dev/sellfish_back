@@ -11,11 +11,12 @@ public class ClotheDTO {
     private String picture;
     private String size;
     private String state;
+    private String location;
 
     public ClotheDTO() {
     }
 
-    public ClotheDTO(String brand, String model, String category, Float price, int publisher, String picture, String size, String state) {
+    public ClotheDTO(String brand, String model, String category, Float price, int publisher, String picture, String size, String state, String location) {
         this.brand = brand;
         this.model = model;
         this.category = category;
@@ -24,6 +25,7 @@ public class ClotheDTO {
         this.picture = picture;
         this.size = size;
         this.state = state;
+        this.location = location;
     }
 
     public String getBrand() {
@@ -90,6 +92,14 @@ public class ClotheDTO {
         this.state = state;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     @Override
     public String toString() {
         return "ClotheDTO{" +
@@ -101,6 +111,7 @@ public class ClotheDTO {
                 ", picture='" + picture + '\'' +
                 ", size='" + size + '\'' +
                 ", state='" + state + '\'' +
+                ", location='" + location + '\'' +
                 '}';
     }
 }
