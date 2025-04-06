@@ -2,6 +2,7 @@ package com.dlozano.app.rest.Services;
 
 import com.dlozano.app.rest.Models.Clothes;
 import com.dlozano.app.rest.Repo.ClothesRepo;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -40,9 +41,18 @@ public class ClothesService {
             List<Predicate> predicates = new ArrayList<>();
 
             if (search != null && !search.isEmpty()) {
-                Predicate brandMatch = cb.like(cb.lower(root.get("brand")), "%" + search.toLowerCase() + "%");
-                Predicate modelMatch = cb.like(cb.lower(root.get("model")), "%" + search.toLowerCase() + "%");
-                predicates.add(cb.or(brandMatch, modelMatch));
+                // Concatenate brand + " " + model as Expressions
+                Expression<String> concatenatedBrandModel = cb.concat(
+                    cb.concat(cb.lower(root.get("brand")),
+                    cb.literal(" ")),
+                    cb.lower(root.get("model"))
+                );
+
+                // Create a Predicate to check if the concatenated brand and model contains the search term
+                Predicate concatenatedMatch = cb.like(concatenatedBrandModel, "%" + search.toLowerCase() + "%");
+
+                // Add the predicate to the list of filters
+                predicates.add(concatenatedMatch);
             }
 
             if (categories != null && !categories.isEmpty()) {
