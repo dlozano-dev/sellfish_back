@@ -1,9 +1,6 @@
 package com.dlozano.app.rest.Controller;
 
-import com.dlozano.app.rest.Models.ClotheDTO;
-import com.dlozano.app.rest.Models.Clothes;
-import com.dlozano.app.rest.Models.User;
-import com.dlozano.app.rest.Models.Wishlist;
+import com.dlozano.app.rest.Models.*;
 import com.dlozano.app.rest.Repo.ClothesRepo;
 import com.dlozano.app.rest.Repo.UserRepo;
 import com.dlozano.app.rest.Repo.WishlistRepo;
@@ -12,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 import jakarta.persistence.EntityManager;
@@ -86,6 +85,10 @@ public class ClothesController {
     ) {
         Pageable pageable = PageRequest.of(page, size);
         return clothesService.getFilteredClothes(search, categories, sizes, location, minPrice, maxPrice, sort, pageable);
+    }
+    @GetMapping("/suggestions")
+    public List<BrandModelDTO> getSuggestions() {
+        return clothesRepo.findFirst250();
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
