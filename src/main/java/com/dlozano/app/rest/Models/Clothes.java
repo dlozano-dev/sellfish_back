@@ -1,6 +1,7 @@
 package com.dlozano.app.rest.Models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Formula;
 
 @Entity
 public class Clothes {
@@ -29,6 +30,9 @@ public class Clothes {
 
     @Column
     private String location;
+
+    @Formula("(SELECT COUNT(*) FROM Wishlist f WHERE f.clothe_id = id)")
+    private int favoritesCount;  // Calculated field
 
     public Clothes() {
     }
@@ -134,6 +138,14 @@ public class Clothes {
         this.location = location;
     }
 
+    public int getFavoritesCount() {
+        return favoritesCount;
+    }
+
+    public void setFavoritesCount(int favoritesCount) {
+        this.favoritesCount = favoritesCount;
+    }
+
     @Override
     public String toString() {
         return "Clothes{" +
@@ -148,6 +160,7 @@ public class Clothes {
                 ", size='" + size + '\'' +
                 ", state='" + state + '\'' +
                 ", location='" + location + '\'' +
+                ", favoritesCount=" + favoritesCount +
                 '}';
     }
 }

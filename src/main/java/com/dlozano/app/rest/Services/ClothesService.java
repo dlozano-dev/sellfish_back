@@ -4,8 +4,7 @@ import com.dlozano.app.rest.Models.Clothes;
 import com.dlozano.app.rest.Repo.ClothesRepo;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,8 +16,26 @@ public class ClothesService {
     @Autowired
     private ClothesRepo clothesRepo;
 
-    public Page<Clothes> getFilteredClothes(String search, List<String> categories, List<String> sizes,
-                                            String location, Float minPrice, Float maxPrice, Pageable pageable) {
+    public Page<Clothes> getFilteredClothes(
+        String search, List<String> categories, List<String> sizes, String location, Float minPrice, Float maxPrice,
+        String orderBy, Pageable pageable
+    ) {
+
+        // Define Sort
+        Sort sort = switch (orderBy) {
+            case "price_asc" -> Sort.by(Sort.Direction.ASC, "price");
+            case "price_desc" -> Sort.by(Sort.Direction.DESC, "price");
+            case "newest" -> Sort.by(Sort.Direction.DESC, "postDate");
+            case "oldest" -> Sort.by(Sort.Direction.ASC, "postDate");
+            case "popular" -> Sort.by(Sort.Direction.DESC, "favoritesCount");
+            case "less_popular" -> Sort.by(Sort.Direction.ASC, "favoritesCount");
+            default -> Sort.unsorted();
+        };
+
+        // Creating Sorted Pageable
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+        // Filter and Order
         return clothesRepo.findAll((root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -49,6 +66,6 @@ public class ClothesService {
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
-        }, pageable);
+        }, sortedPageable);
     }
 }

@@ -73,18 +73,19 @@ public class ClothesController {
     }
 
     @GetMapping("/clothes")
-    public Page<Clothes> getFilteredClothes(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+    public Page<Clothes> getClothes(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) List<String> categories,
             @RequestParam(required = false) List<String> sizes,
             @RequestParam(required = false) String location,
             @RequestParam(required = false) Float minPrice,
-            @RequestParam(required = false) Float maxPrice
+            @RequestParam(required = false) Float maxPrice,
+            @RequestParam(required = false) String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "25") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return clothesService.getFilteredClothes(search, categories, sizes, location, minPrice, maxPrice, pageable);
+        return clothesService.getFilteredClothes(search, categories, sizes, location, minPrice, maxPrice, sort, pageable);
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
