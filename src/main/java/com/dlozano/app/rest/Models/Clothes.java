@@ -31,8 +31,6 @@ public class Clothes {
     private String location;
     @Column
     private String saleState;
-    @Column
-    private String buyerId;
     @Formula("(SELECT COUNT(*) FROM Wishlist f WHERE f.clothe_id = id)")
     private int favoritesCount;  // Calculated field
 
@@ -156,14 +154,6 @@ public class Clothes {
         this.saleState = saleState;
     }
 
-    public String getBuyerId() {
-        return buyerId;
-    }
-
-    public void setBuyerId(String buyerId) {
-        this.buyerId = buyerId;
-    }
-
     @Override
     public String toString() {
         return "Clothes{" +
@@ -179,7 +169,6 @@ public class Clothes {
                 ", state='" + state + '\'' +
                 ", location='" + location + '\'' +
                 ", saleState='" + saleState + '\'' +
-                ", buyerId='" + buyerId + '\'' +
                 ", favoritesCount=" + favoritesCount +
                 '}';
     }
