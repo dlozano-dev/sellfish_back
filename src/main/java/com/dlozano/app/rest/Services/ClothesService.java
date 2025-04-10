@@ -1,7 +1,9 @@
 package com.dlozano.app.rest.Services;
 
+import com.dlozano.app.rest.Models.ClotheDTO;
 import com.dlozano.app.rest.Models.Clothes;
 import com.dlozano.app.rest.Repo.ClothesRepo;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,5 +79,23 @@ public class ClothesService {
 
             return cb.and(predicates.toArray(new Predicate[0]));
         }, sortedPageable);
+    }
+
+    public Clothes updateClothe(int id, ClotheDTO dto) {
+        Clothes existingClothe = clothesRepo.findById((long) id)
+                .orElseThrow(() -> new EntityNotFoundException("Clothe not found"));
+
+        existingClothe.setBrand(dto.getBrand());
+        existingClothe.setModel(dto.getModel());
+        existingClothe.setCategory(dto.getCategory());
+        existingClothe.setPrice(dto.getPrice());
+        existingClothe.setPublisher(dto.getPublisher());
+        existingClothe.setPicture(dto.getPicture());
+        existingClothe.setSize(dto.getSize());
+        existingClothe.setState(dto.getState());
+        existingClothe.setLocation(dto.getLocation());
+        existingClothe.setSaleState(dto.getSaleState());
+
+        return clothesRepo.save(existingClothe);
     }
 }

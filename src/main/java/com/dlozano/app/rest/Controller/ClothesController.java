@@ -5,11 +5,13 @@ import com.dlozano.app.rest.Repo.ClothesRepo;
 import com.dlozano.app.rest.Repo.UserRepo;
 import com.dlozano.app.rest.Repo.WishlistRepo;
 import com.dlozano.app.rest.Services.ClothesService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -142,6 +144,16 @@ public class ClothesController {
             return true;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    @PutMapping("/clothes/{id}")
+    public ResponseEntity<?> updateClothe(@PathVariable int id, @RequestBody ClotheDTO updatedClotheDTO) {
+        try {
+            Clothes updatedClothe = clothesService.updateClothe(id, updatedClotheDTO);
+            return ResponseEntity.ok(updatedClothe);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Clothe not found with ID: " + id);
         }
     }
 }
