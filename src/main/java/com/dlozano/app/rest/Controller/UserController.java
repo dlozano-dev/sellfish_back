@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -83,6 +85,16 @@ public class UserController {
             .map(pfp -> ResponseEntity.ok(pfp.getPicture()))
             .orElseGet(
                 () -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("No profile picture found for userId: " + userId)
+            );
+    }
+
+    @GetMapping("/getUsername/{userId}")
+    public ResponseEntity<String> getUserName(@PathVariable long userId) {
+        Optional<User> user = userRepo.findById(userId);
+        return user
+            .map(u -> ResponseEntity.ok(u.getUsername()))
+            .orElseGet(
+                () -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("No username found for userId: " + userId)
             );
     }
 }
