@@ -1,4 +1,4 @@
-package com.dlozano.app.rest.Models;
+package com.dlozano.app.rest.Models.DTO;
 
 import jakarta.persistence.Column;
 

@@ -1,4 +1,4 @@
-package com.dlozano.app.rest.Models;
+package com.dlozano.app.rest.Models.DTO;
 
 public class BrandModelDTO {
     private String brand;

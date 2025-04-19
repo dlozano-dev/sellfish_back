@@ -1,6 +1,8 @@
 package com.dlozano.app.rest.Controller;
 
 import com.dlozano.app.rest.Models.*;
+import com.dlozano.app.rest.Models.DTO.ProfilePictureDTO;
+import com.dlozano.app.rest.Models.DTO.UpdateEmailDTO;
 import com.dlozano.app.rest.Repo.ProfilePictureRepository;
 import com.dlozano.app.rest.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,23 +10,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
 @RestController
 public class UserController {
     @Autowired
-    private UserRepo userRepo;
+    private UserRepo userRepository;
 
     @Autowired
     private ProfilePictureRepository profilePictureRepository;
 
     @GetMapping(value = "/userExists/{email}/{user}")
     public boolean userExists(@PathVariable String email, @PathVariable String user) {
-        List<User> users = userRepo.findAll();
+        List<User> users = userRepository.findAll();
         for (User i : users) {
             if (i.getEmail().equals(email.trim()) || i.getUsername().equals(user.trim())) {
                 return true;
@@ -35,18 +35,18 @@ public class UserController {
 
     @GetMapping(value = "/getUsers")
     public List<User> getUsers(@RequestBody User user) {
-        return userRepo.findAll();
+        return userRepository.findAll();
     }
 
     @GetMapping(value = "/saveUser/{username}/{email}/{password}")
     public void saveUser(@PathVariable String username, @PathVariable String email, @PathVariable String password) {
         User user = new User(username, email, password);
-        userRepo.save(user);
+        userRepository.save(user);
     }
 
     @GetMapping(value = "/login/{user}/{password}")
     public long login(@PathVariable String user, @PathVariable String password) {
-        List<User> users = userRepo.findAll();
+        List<User> users = userRepository.findAll();
 
         for (User i : users) {
             if (i.getUsername().equals(user.trim()) && i.getPassword().equals(password)) {
@@ -90,11 +90,29 @@ public class UserController {
 
     @GetMapping("/getUsername/{userId}")
     public ResponseEntity<String> getUserName(@PathVariable long userId) {
-        Optional<User> user = userRepo.findById(userId);
+        Optional<User> user = userRepository.findById(userId);
         return user
-            .map(u -> ResponseEntity.ok(u.getUsername()))
-            .orElseGet(
-                () -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("No username found for userId: " + userId)
-            );
+                .map(u -> ResponseEntity.ok(u.getUsername()))
+                .orElseGet(
+                    () -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("No username found for userId: " + userId)
+                );
+    }
+
+    @GetMapping("/getEmail/{userId}")
+    public ResponseEntity<?> getEmailByUserId(@PathVariable long userId) {
+        return userRepository.findById(userId)
+                .map(user -> ResponseEntity.ok(user.getEmail()))
+                .orElse(ResponseEntity.badRequest().body("User not found"));
+    }
+
+    @PostMapping("/updateEmail")
+    public ResponseEntity<?> updateEmail(@RequestBody UpdateEmailDTO request) {
+        return userRepository.findById(request.getUserId())
+                .map(user -> {
+                    user.setEmail(request.getEmail());
+                    userRepository.save(user);
+                    return ResponseEntity.ok("Email updated");
+                })
+                .orElse(ResponseEntity.badRequest().body("User not found"));
     }
 }

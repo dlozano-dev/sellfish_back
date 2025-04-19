@@ -1,6 +1,8 @@
 package com.dlozano.app.rest.Controller;
 
 import com.dlozano.app.rest.Models.*;
+import com.dlozano.app.rest.Models.DTO.BrandModelDTO;
+import com.dlozano.app.rest.Models.DTO.ClotheDTO;
 import com.dlozano.app.rest.Repo.ClothesRepo;
 import com.dlozano.app.rest.Repo.UserRepo;
 import com.dlozano.app.rest.Repo.WishlistRepo;
@@ -10,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,7 +22,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 import jakarta.persistence.EntityManager;
