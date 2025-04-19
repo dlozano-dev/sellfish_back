@@ -2,6 +2,7 @@ package com.dlozano.app.rest.Controller;
 
 import com.dlozano.app.rest.Models.*;
 import com.dlozano.app.rest.Models.DTO.ProfilePictureDTO;
+import com.dlozano.app.rest.Models.DTO.ReviewDTO;
 import com.dlozano.app.rest.Models.DTO.UpdateEmailDTO;
 import com.dlozano.app.rest.Models.DTO.UserProfileDTO;
 import com.dlozano.app.rest.Repositories.ClothesRepository;
@@ -13,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -132,32 +135,48 @@ public class UserController {
     }
 
     @GetMapping("/profile/{id}")
-    public ResponseEntity<?> getUserProfile(@PathVariable int id) {
-        Optional<User> userOpt = userRepository.findById((long) id);
-        if (userOpt.isEmpty()) {
+    public ResponseEntity<?> getProfile(@PathVariable int id) {
+        Optional<User> userOptional = userRepository.findById((long) id);
+        if (userOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-        User user = userOpt.get();
-
-        // Find profile pic (optional)
+        User user = userOptional.get();
         String profilePic = profilePictureRepository.findByUserId(id)
                 .map(ProfilePicture::getPicture)
                 .orElse(null);
+        List<Clothes> clothes = clothesRepository.findByPublisher(user.getId());
+        List<Sale> sales = saleRepository.findBySellerIdAndRateIsNotNull(user.getId());
 
-        // Fetch clothes and reviews
-        List<Clothes> clothesList = clothesRepository.findByPublisher(id);
-        List<Sale> reviewsList = saleRepository.findBySellerId(id);
+        List<ReviewDTO> reviews = sales.stream().map(sale -> {
+            User buyer = userRepository.findById((long) sale.getBuyerId()).orElse(null);
+            String buyerPic = profilePictureRepository.findByUserId(sale.getBuyerId())
+                    .map(ProfilePicture::getPicture)
+                    .orElse(null);
 
-        // Construct DTO
-        UserProfileDTO dto = new UserProfileDTO();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());
-        dto.setProfilePicture(profilePic);
-        dto.setClothes(clothesList);
-        dto.setReviews(reviewsList);
+            ReviewDTO dto = new ReviewDTO();
+            dto.setId(sale.getId());
+            dto.setBuyerId(sale.getBuyerId());
+            dto.setSellerId(sale.getSellerId());
+            dto.setRate(sale.getRate());
+            dto.setReview(sale.getReview());
 
-        return ResponseEntity.ok(dto);
+            if (buyer != null) {
+                dto.setBuyerUsername(buyer.getUsername());
+            }
+
+            dto.setBuyerProfilePicture(buyerPic);
+
+            return dto;
+        }).toList();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("username", user.getUsername());
+        response.put("email", user.getEmail());
+        response.put("profilePicture", profilePic);
+        response.put("clothes", clothes);
+        response.put("reviews", reviews);
+
+        return ResponseEntity.ok(response);
     }
 }
