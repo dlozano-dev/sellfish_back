@@ -3,7 +3,10 @@ package com.dlozano.app.rest.Controller;
 import com.dlozano.app.rest.Models.*;
 import com.dlozano.app.rest.Models.DTO.ProfilePictureDTO;
 import com.dlozano.app.rest.Models.DTO.UpdateEmailDTO;
+import com.dlozano.app.rest.Models.DTO.UserProfileDTO;
+import com.dlozano.app.rest.Repositories.ClothesRepository;
 import com.dlozano.app.rest.Repositories.ProfilePictureRepository;
+import com.dlozano.app.rest.Repositories.SaleRepository;
 import com.dlozano.app.rest.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,12 @@ public class UserController {
 
     @Autowired
     private ProfilePictureRepository profilePictureRepository;
+
+    @Autowired
+    private ClothesRepository clothesRepository;
+
+    @Autowired
+    private SaleRepository saleRepository;
 
     @GetMapping(value = "/userExists/{email}/{user}")
     public boolean userExists(@PathVariable String email, @PathVariable String user) {
@@ -120,5 +129,35 @@ public class UserController {
     public ResponseEntity<List<String>> searchUsernames(@PathVariable String prefix) {
         List<String> usernames = userRepository.findTop50UsernamesByPrefix(prefix);
         return ResponseEntity.ok(usernames);
+    }
+
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<?> getUserProfile(@PathVariable int id) {
+        Optional<User> userOpt = userRepository.findById((long) id);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        User user = userOpt.get();
+
+        // Find profile pic (optional)
+        String profilePic = profilePictureRepository.findByUserId(id)
+                .map(ProfilePicture::getPicture)
+                .orElse(null);
+
+        // Fetch clothes and reviews
+        List<Clothes> clothesList = clothesRepository.findByPublisher(id);
+        List<Sale> reviewsList = saleRepository.findBySellerId(id);
+
+        // Construct DTO
+        UserProfileDTO dto = new UserProfileDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setProfilePicture(profilePic);
+        dto.setClothes(clothesList);
+        dto.setReviews(reviewsList);
+
+        return ResponseEntity.ok(dto);
     }
 }

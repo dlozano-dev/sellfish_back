@@ -2,7 +2,7 @@ package com.dlozano.app.rest.Services;
 
 import com.dlozano.app.rest.Models.DTO.ClotheDTO;
 import com.dlozano.app.rest.Models.Clothes;
-import com.dlozano.app.rest.Repositories.ClothesRepo;
+import com.dlozano.app.rest.Repositories.ClothesRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
@@ -17,7 +17,7 @@ import java.util.List;
 public class ClothesService {
 
     @Autowired
-    private ClothesRepo clothesRepo;
+    private ClothesRepository clothesRepository;
 
     public Page<Clothes> getFilteredClothes(
         String search, List<String> categories, List<String> sizes, String location, Float minPrice, Float maxPrice,
@@ -39,7 +39,7 @@ public class ClothesService {
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
         // Filter and Order
-        return clothesRepo.findAll((root, query, cb) -> {
+        return clothesRepository.findAll((root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(cb.notEqual(root.get("saleState"), "SOLD"));
@@ -84,7 +84,7 @@ public class ClothesService {
     }
 
     public Clothes updateClothe(int id, ClotheDTO dto) {
-        Clothes existingClothe = clothesRepo.findById((long) id)
+        Clothes existingClothe = clothesRepository.findById((long) id)
                 .orElseThrow(() -> new EntityNotFoundException("Clothe not found"));
 
         existingClothe.setBrand(dto.getBrand());
@@ -98,6 +98,6 @@ public class ClothesService {
         existingClothe.setLocation(dto.getLocation());
         existingClothe.setSaleState(dto.getSaleState());
 
-        return clothesRepo.save(existingClothe);
+        return clothesRepository.save(existingClothe);
     }
 }

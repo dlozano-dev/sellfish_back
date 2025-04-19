@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface MessageRepo extends JpaRepository<Message, Long> {
+public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query("SELECT m FROM Message m WHERE m.product = :product AND (m.sender = :user OR m.receiver = :user) ORDER BY m.time ASC")
     List<Message> getMessages(@Param("user") int user, @Param("product") int product);
 

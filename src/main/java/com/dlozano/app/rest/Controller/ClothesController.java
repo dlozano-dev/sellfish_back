@@ -3,9 +3,9 @@ package com.dlozano.app.rest.Controller;
 import com.dlozano.app.rest.Models.*;
 import com.dlozano.app.rest.Models.DTO.BrandModelDTO;
 import com.dlozano.app.rest.Models.DTO.ClotheDTO;
-import com.dlozano.app.rest.Repositories.ClothesRepo;
+import com.dlozano.app.rest.Repositories.ClothesRepository;
 import com.dlozano.app.rest.Repositories.UserRepository;
-import com.dlozano.app.rest.Repositories.WishlistRepo;
+import com.dlozano.app.rest.Repositories.WishlistRepository;
 import com.dlozano.app.rest.Services.ClothesService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import jakarta.persistence.PersistenceContext;
 @RestController
 public class ClothesController {
     @Autowired
-    private ClothesRepo clothesRepo;
+    private ClothesRepository clothesRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -38,7 +38,7 @@ public class ClothesController {
     private ClothesService clothesService;
 
     @Autowired
-    private WishlistRepo wishlistRepo;
+    private WishlistRepository wishlistRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -63,14 +63,14 @@ public class ClothesController {
 
     @GetMapping(value = "/wishlist/{userId}")
     public List<Clothes> getWishList(@PathVariable long userId) {
-        List<Wishlist> wishlist = wishlistRepo.findAll();
+        List<Wishlist> wishlist = wishlistRepository.findAll();
         List<Long> ids = new ArrayList<>();
         for (Wishlist i: wishlist) {
             if (i.getUserId() == userId) {
                 ids.add(i.getClotheId());
             }
         }
-        return clothesRepo.findAllById(ids);
+        return clothesRepository.findAllById(ids);
     }
 
     @GetMapping("/clothes")
@@ -90,7 +90,7 @@ public class ClothesController {
     }
     @GetMapping("/suggestions")
     public List<BrandModelDTO> getSuggestions() {
-        return clothesRepo.findFirst250();
+        return clothesRepository.findFirst250();
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
@@ -115,7 +115,7 @@ public class ClothesController {
                 clotheDTO.getLocation()
             );
 
-            clothesRepo.save(clothes);
+            clothesRepository.save(clothes);
 
             return ResponseEntity.ok(true);
         } catch (Exception e) {
@@ -127,11 +127,11 @@ public class ClothesController {
     public boolean setFavorite(@PathVariable int userId, @PathVariable int productId) {
         try {
             Wishlist liked = new Wishlist(userId, productId);
-            wishlistRepo.save(liked);
+            wishlistRepository.save(liked);
             return true;
         } catch (Exception e) {
             String id = "SELECT * FROM wishlist WHERE user_id = ? AND clothe_id = ?";
-            wishlistRepo.delete(jdbcTemplate.queryForObject(id, new Object[]{userId, productId}, new WishlistRowMapper()));
+            wishlistRepository.delete(jdbcTemplate.queryForObject(id, new Object[]{userId, productId}, new WishlistRowMapper()));
             return false;
         }
     }
