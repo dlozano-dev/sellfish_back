@@ -2,7 +2,7 @@ package com.dlozano.app.rest.Services;
 
 import com.dlozano.app.rest.Models.DTO.ClotheDTO;
 import com.dlozano.app.rest.Models.Clothes;
-import com.dlozano.app.rest.Repo.ClothesRepo;
+import com.dlozano.app.rest.Repositories.ClothesRepo;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;

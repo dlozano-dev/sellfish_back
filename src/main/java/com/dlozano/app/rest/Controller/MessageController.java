@@ -2,7 +2,7 @@ package com.dlozano.app.rest.Controller;
 
 import com.dlozano.app.rest.Models.Clothes;
 import com.dlozano.app.rest.Models.Message;
-import com.dlozano.app.rest.Repo.MessageRepo;
+import com.dlozano.app.rest.Repositories.MessageRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

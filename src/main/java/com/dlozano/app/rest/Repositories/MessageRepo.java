@@ -1,4 +1,4 @@
-package com.dlozano.app.rest.Repo;
+package com.dlozano.app.rest.Repositories;
 
 import com.dlozano.app.rest.Models.Clothes;
 import com.dlozano.app.rest.Models.Message;
