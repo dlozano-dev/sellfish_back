@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface ClothesRepo extends JpaRepository<Clothes, Long>, JpaSpecificationExecutor<Clothes> {
-    @Query("SELECT DISTINCT new com.dlozano.app.rest.Models.DTO.BrandModelDTO(c.brand, c.model) FROM Clothes c")
+    @Query("SELECT DISTINCT new com.dlozano.app.rest.Models.DTO.BrandModelDTO(c.brand, c.model) FROM Clothes c WHERE saleState != 'SOLD'")
     List<BrandModelDTO> findFirst250();
 }

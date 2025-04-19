@@ -42,6 +42,8 @@ public class ClothesService {
         return clothesRepo.findAll((root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            predicates.add(cb.notEqual(root.get("saleState"), "SOLD"));
+
             if (search != null && !search.isEmpty()) {
                 // Concatenate brand + " " + model as Expressions
                 Expression<String> concatenatedBrandModel = cb.concat(
