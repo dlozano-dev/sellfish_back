@@ -4,7 +4,7 @@ import com.dlozano.app.rest.Models.*;
 import com.dlozano.app.rest.Models.DTO.BrandModelDTO;
 import com.dlozano.app.rest.Models.DTO.ClotheDTO;
 import com.dlozano.app.rest.Repo.ClothesRepo;
-import com.dlozano.app.rest.Repo.UserRepo;
+import com.dlozano.app.rest.Repo.UserRepository;
 import com.dlozano.app.rest.Repo.WishlistRepo;
 import com.dlozano.app.rest.Services.ClothesService;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,7 +32,7 @@ public class ClothesController {
     @Autowired
     private ClothesRepo clothesRepo;
     @Autowired
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
     @Autowired
     private ClothesService clothesService;
@@ -98,7 +98,7 @@ public class ClothesController {
     public ResponseEntity<Boolean> saveClothe(@RequestBody ClotheDTO clotheDTO) {
         try {
             // Ensure user exists
-            User user = userRepo.findById((long) clotheDTO.getPublisher()).orElseThrow(() ->
+            User user = userRepository.findById((long) clotheDTO.getPublisher()).orElseThrow(() ->
                 new RuntimeException("User not found")
             );
 

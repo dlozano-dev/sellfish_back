@@ -4,7 +4,7 @@ import com.dlozano.app.rest.Models.*;
 import com.dlozano.app.rest.Models.DTO.ProfilePictureDTO;
 import com.dlozano.app.rest.Models.DTO.UpdateEmailDTO;
 import com.dlozano.app.rest.Repo.ProfilePictureRepository;
-import com.dlozano.app.rest.Repo.UserRepo;
+import com.dlozano.app.rest.Repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @RestController
 public class UserController {
     @Autowired
-    private UserRepo userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private ProfilePictureRepository profilePictureRepository;
@@ -114,5 +114,11 @@ public class UserController {
                     return ResponseEntity.ok("Email updated");
                 })
                 .orElse(ResponseEntity.badRequest().body("User not found"));
+    }
+
+    @GetMapping("/searchUsernames/{prefix}")
+    public ResponseEntity<List<String>> searchUsernames(@PathVariable String prefix) {
+        List<String> usernames = userRepository.findTop50UsernamesByPrefix(prefix);
+        return ResponseEntity.ok(usernames);
     }
 }
