@@ -7,5 +7,7 @@ import java.util.List;
 
 public interface SaleRepository extends JpaRepository<Sale, Integer> {
     List<Sale> findBySellerIdAndRateIsNotNull(int sellerId);
+
+    List<Sale> findByBuyerIdAndRateIsNull(int buyerId);
 }
 
