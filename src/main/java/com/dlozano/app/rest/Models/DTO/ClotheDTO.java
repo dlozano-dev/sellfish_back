@@ -1,7 +1,5 @@
 package com.dlozano.app.rest.Models.DTO;
 
-import jakarta.persistence.Column;
-
 public class ClotheDTO {
     private String brand;
     private String model;
