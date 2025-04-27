@@ -31,7 +31,7 @@ public class Clothes {
     private String location;
     @Column
     private String saleState = "FOR_SALE";
-    @Formula("(SELECT COUNT(*) FROM Wishlist f WHERE f.clothe_id = id)")
+    @Formula("(SELECT COUNT(*) FROM wishlist f WHERE f.clothe_id = id)")
     private int favoritesCount;  // Calculated field
 
     public Clothes() {

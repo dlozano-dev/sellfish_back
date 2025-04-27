@@ -3,6 +3,7 @@ package com.dlozano.app.rest.Models;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "wishlist")
 public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
