@@ -92,6 +92,7 @@ public class ClothesService {
         existingClothe.setCategory(dto.getCategory());
         existingClothe.setPrice(dto.getPrice());
         existingClothe.setPublisher(dto.getPublisher());
+        existingClothe.setSeller(dto.getSeller());
         existingClothe.setPicture(dto.getPicture());
         existingClothe.setSize(dto.getSize());
         existingClothe.setState(dto.getState());
@@ -100,4 +101,5 @@ public class ClothesService {
 
         return clothesRepository.save(existingClothe);
     }
+
 }

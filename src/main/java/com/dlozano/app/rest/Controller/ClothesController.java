@@ -108,6 +108,7 @@ public class ClothesController {
                 clotheDTO.getCategory(),
                 clotheDTO.getPrice(),
                 user.getId(),
+                clotheDTO.getSeller(),
                 clotheDTO.getPicture(),
                 Long.toString(System.currentTimeMillis()),
                 clotheDTO.getSize(),

@@ -9,46 +9,63 @@ public class Clothes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @Column
     private String brand;
+
     @Column
     private String model;
+
     @Column
     private String category;
+
     @Column
     private float price;
+
     @Column
     private int publisher;
+
+    @Column
+    private String seller;
+
     @Column
     private String picture;
+
     @Column
     private String postDate;
+
     @Column
     private String size;
+
     @Column
     private String state;
+
     @Column
     private String location;
+
     @Column
     private String saleState = "FOR_SALE";
+
     @Formula("(SELECT COUNT(*) FROM wishlist f WHERE f.clothe_id = id)")
     private int favoritesCount;  // Calculated field
 
-    public Clothes() {
-    }
+    public Clothes() {}
 
-    public Clothes(String brand, String model, String category, float price, int publisher, String picture, String postDate, String size, String state, String location) {
+    public Clothes(String brand, String model, String category, float price, int publisher, String seller, String picture, String postDate, String size, String state, String location) {
         this.brand = brand;
         this.model = model;
         this.category = category;
         this.price = price;
         this.publisher = publisher;
+        this.seller = seller;
         this.picture = picture;
         this.postDate = postDate;
         this.size = size;
         this.state = state;
         this.location = location;
     }
+
+    // Getters and Setters
 
     public int getId() {
         return id;
@@ -96,6 +113,14 @@ public class Clothes {
 
     public void setPublisher(int publisher) {
         this.publisher = publisher;
+    }
+
+    public String getSeller() {
+        return seller;
+    }
+
+    public void setSeller(String seller) {
+        this.seller = seller;
     }
 
     public String getPicture() {
@@ -163,6 +188,7 @@ public class Clothes {
                 ", category='" + category + '\'' +
                 ", price=" + price +
                 ", publisher=" + publisher +
+                ", seller='" + seller + '\'' +
                 ", picture='" + picture + '\'' +
                 ", postDate='" + postDate + '\'' +
                 ", size='" + size + '\'' +
