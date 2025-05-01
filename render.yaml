@@ -1,7 +1,5 @@
 services:
   - type: web
     name: backend-service
-    env: java
+    runtime: docker
     plan: free
-    buildCommand: chmod +x mvnw && ./mvnw clean install
-    startCommand: ./mvnw spring-boot:run
