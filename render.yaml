@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: backend-service
+    env: java
+    plan: free
+    buildCommand: chmod +x mvnw && ./mvnw clean install
+    startCommand: ./mvnw spring-boot:run
