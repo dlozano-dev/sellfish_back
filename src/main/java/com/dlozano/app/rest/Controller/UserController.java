@@ -4,7 +4,6 @@ import com.dlozano.app.rest.Models.*;
 import com.dlozano.app.rest.Models.DTO.ProfilePictureDTO;
 import com.dlozano.app.rest.Models.DTO.ReviewDTO;
 import com.dlozano.app.rest.Models.DTO.UpdateEmailDTO;
-import com.dlozano.app.rest.Models.DTO.UserProfileDTO;
 import com.dlozano.app.rest.Repositories.ClothesRepository;
 import com.dlozano.app.rest.Repositories.ProfilePictureRepository;
 import com.dlozano.app.rest.Repositories.SaleRepository;
@@ -12,6 +11,8 @@ import com.dlozano.app.rest.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,6 +35,8 @@ public class UserController {
     @Autowired
     private SaleRepository saleRepository;
 
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @GetMapping(value = "/userExists/{email}/{user}")
     public boolean userExists(@PathVariable String email, @PathVariable String user) {
         List<User> users = userRepository.findAll();
@@ -52,8 +55,13 @@ public class UserController {
 
     @GetMapping(value = "/saveUser/{username}/{email}/{password}")
     public void saveUser(@PathVariable String username, @PathVariable String email, @PathVariable String password) {
-        User user = new User(username, email, password);
+        String hashedPassword = passwordEncoder.encode(password);
+        User user = new User(username, email, hashedPassword);
         userRepository.save(user);
+    }
+
+    public boolean verifyPassword(String rawPassword, String hashedPassword) {
+        return passwordEncoder.matches(rawPassword, hashedPassword);
     }
 
     @GetMapping(value = "/login/{user}/{password}")
@@ -61,7 +69,7 @@ public class UserController {
         List<User> users = userRepository.findAll();
 
         for (User i : users) {
-            if (i.getUsername().equals(user.trim()) && i.getPassword().equals(password)) {
+            if (i.getUsername().equals(user.trim()) && verifyPassword(password, i.getPassword())) {
                 return i.getId();
             }
         }
