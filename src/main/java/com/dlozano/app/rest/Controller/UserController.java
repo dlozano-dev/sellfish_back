@@ -8,18 +8,16 @@ import com.dlozano.app.rest.Repositories.ClothesRepository;
 import com.dlozano.app.rest.Repositories.ProfilePictureRepository;
 import com.dlozano.app.rest.Repositories.SaleRepository;
 import com.dlozano.app.rest.Repositories.UserRepository;
+import com.dlozano.app.rest.Services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import java.util.*;
 
 @RestController
 public class UserController {
@@ -35,51 +33,82 @@ public class UserController {
     @Autowired
     private SaleRepository saleRepository;
 
+    @Autowired
+    private JwtService jwtService;
+
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    @GetMapping(value = "/userExists/{email}/{user}")
+    // Public: check if user or email exists
+    @GetMapping("/userExists/{email}/{user}")
     public boolean userExists(@PathVariable String email, @PathVariable String user) {
-        List<User> users = userRepository.findAll();
-        for (User i : users) {
-            if (i.getEmail().equals(email.trim()) || i.getUsername().equals(user.trim())) {
-                return true;
-            }
-        }
-        return false;
+        return userRepository.findAll().stream()
+                .anyMatch(i -> i.getEmail().equals(email.trim()) || i.getUsername().equals(user.trim()));
     }
 
-    @GetMapping(value = "/getUsers")
-    public List<User> getUsers(@RequestBody User user) {
+    // Public: user registration
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody User user) {
+        if (userExists(user.getEmail(), user.getUsername())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User or email already exists");
+        }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        return ResponseEntity.ok("User registered successfully");
+    }
+
+    // Public: login with JWT token response
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+        String username = credentials.get("username");
+        String password = credentials.get("password");
+
+        Optional<User> userOpt = userRepository.findByUsername(username.trim());
+
+        if (userOpt.isPresent() && passwordEncoder.matches(password, userOpt.get().getPassword())) {
+            String token = jwtService.generateToken(userOpt.get().getUsername());
+            return ResponseEntity.ok(Map.of("token", token, "userId", userOpt.get().getId()));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Not authenticated");
+        }
+
+        String username = authentication.getName();  // from JWT principal
+        Optional<User> user = userRepository.findByUsername(username);
+        if (user.isPresent()) {
+            User u = user.get();
+            Map<String, Object> userInfo = new HashMap<>();
+            userInfo.put("id", u.getId());
+            userInfo.put("username", u.getUsername());
+            userInfo.put("email", u.getEmail());
+            return ResponseEntity.ok(userInfo);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+    }
+
+    @GetMapping("/getUsers")
+    public List<User> getUsers() {
         return userRepository.findAll();
     }
 
-    @GetMapping(value = "/saveUser/{username}/{email}/{password}")
-    public void saveUser(@PathVariable String username, @PathVariable String email, @PathVariable String password) {
-        String hashedPassword = passwordEncoder.encode(password);
-        User user = new User(username, email, hashedPassword);
-        userRepository.save(user);
+    // Protected: get username from JWT
+    private String getAuthenticatedUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth.getName();
     }
 
-    public boolean verifyPassword(String rawPassword, String hashedPassword) {
-        return passwordEncoder.matches(rawPassword, hashedPassword);
-    }
-
-    @GetMapping(value = "/login/{user}/{password}")
-    public long login(@PathVariable String user, @PathVariable String password) {
-        List<User> users = userRepository.findAll();
-
-        for (User i : users) {
-            if (i.getUsername().equals(user.trim()) && verifyPassword(password, i.getPassword())) {
-                return i.getId();
-            }
-        }
-        return -1;
-    }
-
+    // Protected: save profile picture
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/saveProfilePicture")
     public String uploadProfilePicture(@RequestBody ProfilePictureDTO profilePictureDTO) {
-        int  userId = profilePictureDTO.getUserId();
+        int userId = profilePictureDTO.getUserId();
         String newPicture = profilePictureDTO.getPicture();
 
         Optional<ProfilePicture> existing = profilePictureRepository.findByUserId(userId);
@@ -98,14 +127,12 @@ public class UserController {
     }
 
     @GetMapping("/profilePicture/{userId}")
-    public ResponseEntity<String> getProfilePicture(@PathVariable int  userId) {
+    public ResponseEntity<String> getProfilePicture(@PathVariable int userId) {
         Optional<ProfilePicture> profilePicture = profilePictureRepository.findByUserId(userId);
 
         return profilePicture
-            .map(pfp -> ResponseEntity.ok(pfp.getPicture()))
-            .orElseGet(
-                () -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("No profile picture found for userId: " + userId)
-            );
+                .map(pfp -> ResponseEntity.ok(pfp.getPicture()))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("No profile picture found for userId: " + userId));
     }
 
     @GetMapping("/getUsername/{userId}")
@@ -113,9 +140,7 @@ public class UserController {
         Optional<User> user = userRepository.findById(userId);
         return user
                 .map(u -> ResponseEntity.ok(u.getUsername()))
-                .orElseGet(
-                    () -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("No username found for userId: " + userId)
-                );
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("No username found for userId: " + userId));
     }
 
     @GetMapping("/getEmail/{userId}")
@@ -174,7 +199,6 @@ public class UserController {
             }
 
             dto.setBuyerProfilePicture(buyerPic);
-
             return dto;
         }).toList();
 
