@@ -1,4 +1,4 @@
-# 🌱 Spring Boot Backend
+# 🌱 Sellfish Backend
 
 This is a basic backend application built with **Spring Boot**, using **Maven** as the build tool and running on **Java 21**.
 
