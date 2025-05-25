@@ -105,7 +105,7 @@ public class UserController {
     }
 
     // Protected: save profile picture
-    @CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "https://sellfish.vercel.app")
     @PostMapping("/saveProfilePicture")
     public String uploadProfilePicture(@RequestBody ProfilePictureDTO profilePictureDTO) {
         int userId = profilePictureDTO.getUserId();

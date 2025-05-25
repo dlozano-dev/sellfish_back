@@ -93,7 +93,7 @@ public class ClothesController {
         return clothesRepository.findFirst250();
     }
 
-    @CrossOrigin(origins = "http://localhost:5173")
+    @CrossOrigin(origins = "https://sellfish.vercel.app")
     @PostMapping("/saveClothe")
     public ResponseEntity<Boolean> saveClothe(@RequestBody ClotheDTO clotheDTO) {
         try {
